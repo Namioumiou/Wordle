@@ -21,7 +21,16 @@ export class WordleGame {
         return this.word;
     }
 
+    getMaxAttempts() {
+        return this.maxAttempts;
+    }
+
+    getAttempts() {
+        return this.attempts;
+    }
+
     checkLetters(inputWord: string): string[] {
+        console.debug(`checkLetters called with inputWord: ${inputWord}`);
         const upperInputWord = this.validateWord(inputWord);
         const result: string[] = [];
         const resultColor: string[] = [];
@@ -62,6 +71,7 @@ export class WordleGame {
 
         if (result.every(status => status === 'correct')) {
             console.log('🎉 Congratulations! You guessed the word correctly. 🎉');
+            process.exit(0);
         }
 
         return result;
@@ -72,20 +82,29 @@ export class WordleGame {
     }
 
     async play() {
+        console.debug('play method called');
         const readline = await import('readline');
         const rl = readline.createInterface({
             input: process.stdin,
             output: process.stdout
         });
 
+        let suggestedWord = '_____';
+
         const askForGuess = () => {
-            if (this.attempts == this.maxAttempts) {
+            console.debug(`askForGuess called, attempts: ${this.attempts}`);
+            if (this.attempts >= this.maxAttempts) {
                 console.log(`You've used all your attempts. The word was: ${this.word}`);
                 rl.close();
                 return;
             }
 
-            rl.question(`Enter your guess (or type "exit" to quit). Attempts left: ${this.maxAttempts - this.attempts}: `, (inputWord: string) => {
+            const prompt = this.attempts === 1
+                ? `Enter your guess (or type "exit" to quit). Attempts left: ${this.maxAttempts - this.attempts}: `
+                : `Enter your guess (or type "exit" to quit). Attempts left: ${this.maxAttempts - this.attempts}. Suggested word: ${suggestedWord}: `;
+
+            rl.question(prompt, (inputWord: string) => {
+                console.debug(`User input: ${inputWord}`);
                 if (inputWord.toLowerCase() === 'exit') {
                     rl.close();
                     return;
@@ -94,7 +113,9 @@ export class WordleGame {
                     const validatedWord = this.validateWord(inputWord);
                     const result = this.checkLetters(validatedWord);
                     this.incrementAttempts();
+                    suggestedWord = suggestedWord.split('').map((char, index) => result[index] === 'correct' ? validatedWord[index] : char).join('');
                     if (result.every(status => status === 'correct')) {
+                        console.debug('User guessed the word correctly');
                         rl.close();
                         return;
                     }

@@ -17,6 +17,9 @@ I.
 	oui - si plus d'essaie game over
 
 
++ suggestion de mot : A TESTER
+
+
 a test : 
 	oui - tester que le mot a bien 5 lettres
 	oui - tester que erreur si mot de plus de 5 lettres
@@ -24,8 +27,9 @@ a test :
 	oui- tester que les accent ne passent pas
 	oui- tester que les lettres soient bien mise en uppercase
 	oui- comparai les 2 mots
-	oui - si tout ok message
-	- test si les essaies s'ajoute bien
-	- test si plus d'essaies
+	NON !! - si tout ok message + stop du jeu
+	oui - test si les essaies s'ajoute bien
+	oui - test si plus d'essaies
 
 
+bien faire en sorte que les test ne font qu'un truc
