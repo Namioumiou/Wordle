@@ -1,0 +1,31 @@
+Truc a faire :
+
+I.
+
+1.
+	- on a 1 mot de base
+	oui - permettre d'entrer que des lettres + les mettrent en uppercase + pas d'accent
+	oui - faire la comparaison
+
+2.
+	oui- ajouter un tableau de couleur
+	oui - enregistrer les lettres quand elles sont pas a la bonne place pour voir si elles sont dans le mot (pour la couleur orange)
+	oui - mettre les couleurs associer aux lettre et les affichées
+
+3.
+	oui - on a 6 essaies afficher
+	oui - si plus d'essaie game over
+
+
+a test : 
+	oui - tester que le mot a bien 5 lettres
+	oui - tester que erreur si mot de plus de 5 lettres
+	oui- tester que les chiffres ne passent pas
+	oui- tester que les accent ne passent pas
+	oui- tester que les lettres soient bien mise en uppercase
+	oui- comparai les 2 mots
+	oui - si tout ok message
+	- test si les essaies s'ajoute bien
+	- test si plus d'essaies
+
+
