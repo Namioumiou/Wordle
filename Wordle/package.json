@@ -19,5 +19,8 @@
   "ts-node": {
     "esm": true,
     "experimentalSpecifierResolution": "node"
+  },
+  "dependencies": {
+    "@vitejs/plugin-react": "^4.3.4"
   }
 }

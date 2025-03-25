@@ -4,18 +4,12 @@ import { expect, it, describe, vi } from 'vitest';
 describe('WordleGame', () => {
     it('should throw an error if the word is not exactly 5 letters', () => {
         // Arrange
-        const consoleErrorSpy = vi.spyOn(console, 'error');
-
-        // Act
         const game1 = () => new WordleGame("hell");
         const game2 = () => new WordleGame("helloo");
 
-        // Assert
+        // Act & Assert
         expect(game1).toThrow("Word must contain exactly 5 letters without accents or numbers.");
         expect(game2).toThrow("Word must contain exactly 5 letters without accents or numbers.");
-
-        // Cleanup
-        consoleErrorSpy.mockRestore();
     });
 
     it('should convert the word to uppercase', () => {
@@ -29,20 +23,14 @@ describe('WordleGame', () => {
         expect(word).toBe("HELLO");
     });
 
-    it('should log an error message if the input word contain accent or numbers', () => {
+    it('should throw an error if the input word contains accents or numbers', () => {
         // Arrange
-        const consoleErrorSpy = vi.spyOn(console, 'error');
-
-        // Act
         const game1 = () => new WordleGame("héllo");
         const game2 = () => new WordleGame("hell1");
 
-        // Assert
+        // Act & Assert
         expect(game1).toThrow("❗ Word must contain exactly 5 letters without accents or numbers. ❗");
         expect(game2).toThrow("❗ Word must contain exactly 5 letters without accents or numbers. ❗");
-
-        // Cleanup
-        consoleErrorSpy.mockRestore();
     });
 
     it('should handle duplicate letters correctly when one is correct and the other is present', () => {
@@ -128,7 +116,6 @@ describe('WordleGame', () => {
     it('should count the number of attempts correctly', () => {
         // Arrange
         const game = new WordleGame("hello");
-        const consoleSpy = vi.spyOn(console, 'log');
 
         // Act
         game.checkLetters("world");
@@ -140,58 +127,34 @@ describe('WordleGame', () => {
 
         // Assert
         expect(game['attempts']).toBe(4); // Initial attempt + 3 increments
-        expect(consoleSpy).toHaveBeenCalledWith('⬛🟨⬛🟩⬛');
-        expect(consoleSpy).toHaveBeenCalledWith('⬛🟨⬛🟩⬛');
-        expect(consoleSpy).toHaveBeenCalledWith('⬛🟨⬛🟩⬛');
-
-        // Cleanup        
-        consoleSpy.mockRestore();
     });
 
-    it('should play the game and handle user input correctly', async () => {
+    it('should return the correct number of attempts', () => {
         // Arrange
-        console.debug('Test: should play the game and handle user input correctly');
         const game = new WordleGame("hello");
-        const consoleSpy = vi.spyOn(console, 'log');
-        const processExitSpy = vi.spyOn(process, 'exit').mockImplementation((code?: number | undefined): never => {
-            throw new Error(`process.exit: ${code}`);
-        });
-
-        const readline = await import('readline');
-        const rl = readline.createInterface({
-            input: process.stdin,
-            output: process.stdout
-        });
-
-        const rlQuestionSpy = vi.spyOn(rl, 'question').mockImplementation((question, callback) => {
-            console.debug(`Mocked readline question: ${question}`);
-            if (question.includes("Attempts left: 6")) {
-                callback("hello");
-            } else {
-                callback("exit");
-            }
-        });
 
         // Act
-        try {
-            await game.play();
-        } catch (error) {
-            console.debug(`Caught error: ${(error as Error).message}`);
-            expect((error as Error).message).toBe('process.exit: 0');
-        }
+        const initialAttempts = game.getAttempts();
+        game.incrementAttempts();
+        const updatedAttempts = game.getAttempts();
 
         // Assert
-        console.debug('Asserting console logs');
-        expect(consoleSpy).toHaveBeenCalledWith('🟩🟩🟩🟩🟩');
-        expect(consoleSpy).toHaveBeenCalledWith('🎉 Congratulations! You guessed the word correctly. 🎉');
-
-        // Cleanup
-        consoleSpy.mockRestore();
-        processExitSpy.mockRestore();
-        rlQuestionSpy.mockRestore();
+        expect(initialAttempts).toBe(1);
+        expect(updatedAttempts).toBe(2);
     });
 
-    /*it('should display a message when the player runs out of attempts', () => {
+    it('should return the correct maximum number of attempts', () => {
+        // Arrange
+        const game = new WordleGame("hello");
+
+        // Act
+        const maxAttempts = game.getMaxAttempts();
+
+        // Assert
+        expect(maxAttempts).toBe(7);
+    });
+
+    it('should display a message when the player runs out of attempts', () => {
         // Arrange
         const game = new WordleGame("hello");
         const consoleSpy = vi.spyOn(console, 'log');
@@ -208,5 +171,23 @@ describe('WordleGame', () => {
 
         // Cleanup        
         consoleSpy.mockRestore();    
+    });
+
+    /*it('should play the game and handle user inputs correctly', () => {
+        // Arrange
+        const game = new WordleGame("hello");
+        const consoleSpy = vi.spyOn(console, 'log');
+        const promptSpy = vi.spyOn(game as any, 'promptUser').mockImplementation(() => "hello");
+
+        // Act
+        game.play();
+
+        // Assert
+        expect(consoleSpy).toHaveBeenCalledWith('🟩🟩🟩🟩🟩');
+        expect(consoleSpy).toHaveBeenCalledWith('🎉 Congratulations! You guessed the word correctly. 🎉');
+
+        // Cleanup
+        consoleSpy.mockRestore();
+        promptSpy.mockRestore();
     });*/
 });

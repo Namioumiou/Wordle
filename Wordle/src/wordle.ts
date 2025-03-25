@@ -3,6 +3,8 @@ export class WordleGame {
     private word: string;
     private maxAttempts: number = 7;
     private attempts: number = 1;
+    private gamesWon: number = 0;
+    private gamesLost: number = 0;
 
     constructor(word: string) {
         this.word = this.validateWord(word);
@@ -27,6 +29,14 @@ export class WordleGame {
 
     getAttempts() {
         return this.attempts;
+    }
+
+    getGamesWon() {
+        return this.gamesWon;
+    }
+
+    getGamesLost() {
+        return this.gamesLost;
     }
 
     checkLetters(inputWord: string): string[] {
@@ -71,7 +81,13 @@ export class WordleGame {
 
         if (result.every(status => status === 'correct')) {
             console.log('🎉 Congratulations! You guessed the word correctly. 🎉');
+            this.gamesWon++;
             process.exit(0);
+        }
+
+        if (this.attempts >= this.maxAttempts) {
+            console.log(`You've used all your attempts. The word was: ${this.word}`);
+            this.gamesLost++;
         }
 
         return result;
@@ -83,6 +99,7 @@ export class WordleGame {
 
     async play() {
         console.debug('play method called');
+        console.log(`Games won: ${this.gamesWon}, Games lost: ${this.gamesLost}`);
         const readline = await import('readline');
         const rl = readline.createInterface({
             input: process.stdin,
@@ -95,6 +112,7 @@ export class WordleGame {
             console.debug(`askForGuess called, attempts: ${this.attempts}`);
             if (this.attempts >= this.maxAttempts) {
                 console.log(`You've used all your attempts. The word was: ${this.word}`);
+                this.gamesLost++;
                 rl.close();
                 return;
             }
@@ -116,6 +134,7 @@ export class WordleGame {
                     suggestedWord = suggestedWord.split('').map((char, index) => result[index] === 'correct' ? validatedWord[index] : char).join('');
                     if (result.every(status => status === 'correct')) {
                         console.debug('User guessed the word correctly');
+                        this.gamesWon++;
                         rl.close();
                         return;
                     }
@@ -132,5 +151,11 @@ export class WordleGame {
         };
 
         askForGuess();
+    }
+
+    // Mock implementation for testing purposes
+    promptUser(): string {
+        // This method should be overridden in tests
+        return "";
     }
 }
